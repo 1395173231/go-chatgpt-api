@@ -86,6 +86,19 @@ func GetAccessToken(loginInfo api.LoginInfo) (int, string, string) {
 	if err != nil {
 		return statusCode, err.Error(), ""
 	}
+	var access map[string]interface{}
+	json.Unmarshal([]byte(accessToken), &access)
 
-	return http.StatusOK, "", accessToken
+	sessResp, statusCode, err := userLogin.GetSessToken(accessToken)
+	if err != nil {
+		return statusCode, err.Error(), ""
+	}
+	var sess map[string]interface{}
+	json.Unmarshal([]byte(sessResp), &sess)
+	access["sessToken"] = sess["user"].(map[string]interface{})["session"].(map[string]interface{})["sensitive_id"].(string)
+	token, err := json.Marshal(access)
+	if err != nil {
+		return 500, err.Error(), ""
+	}
+	return http.StatusOK, "", string(token)
 }

@@ -179,3 +179,28 @@ func (userLogin *UserLogin) GetAccessToken(code string) (string, int, error) {
 	data, _ := io.ReadAll(resp.Body)
 	return string(data), http.StatusOK, nil
 }
+
+//goland:noinspection GoUnhandledErrorResult,GoErrorStringFormat,GoUnusedParameter
+func (userLogin *UserLogin) GetSessToken(accessToken string) (string, int, error) {
+	req, err := http.NewRequest(http.MethodGet, sessTokenUrl, nil)
+	req.Header.Set("User-Agent", api.UserAgent)
+	req.Header.Set("Authorization", "Bearer "+accessToken)
+	resp, err := userLogin.client.Do(req)
+	if err != nil {
+		return "", http.StatusInternalServerError, err
+	}
+
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		if resp.StatusCode == http.StatusTooManyRequests {
+			responseMap := make(map[string]string)
+			json.NewDecoder(resp.Body).Decode(&responseMap)
+			return "", resp.StatusCode, errors.New(responseMap["detail"])
+		}
+
+		return "", resp.StatusCode, errors.New(api.GetAccessTokenErrorMessage)
+	}
+
+	data, _ := io.ReadAll(resp.Body)
+	return string(data), http.StatusOK, nil
+}

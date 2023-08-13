@@ -9,6 +9,7 @@ const (
 	promptLoginUrl           = "https://chat.openai.com/api/auth/signin/auth0?prompt=login"
 	getCsrfTokenErrorMessage = "Failed to get CSRF token."
 	authSessionUrl           = "https://chat.openai.com/api/auth/session"
+	sessTokenUrl             = "https://api.openai.com/dashboard/onboarding/login"
 
 	gpt4Model                          = "gpt-4"
 	actionContinue                     = "continue"
