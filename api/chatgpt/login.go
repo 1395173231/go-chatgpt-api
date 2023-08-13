@@ -2,6 +2,7 @@ package chatgpt
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"github.com/PuerkitoBio/goquery"
@@ -88,6 +89,8 @@ func GetAccessToken(loginInfo api.LoginInfo) (int, string, string) {
 	}
 	var access map[string]interface{}
 	json.Unmarshal([]byte(accessToken), &access)
+
+	fmt.Println(accessToken)
 
 	sessResp, statusCode, err := userLogin.GetSessToken(accessToken)
 	if err != nil {
